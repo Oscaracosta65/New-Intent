@@ -432,6 +432,7 @@ final class ModLeInstantintentHelper
             return true;
         });
         $pool = array_values($pool);
+        $poolSize = count($pool);
 
         // Reasonable attempt limit based on what we need
         $maxAttempts = min(3000, $count * 50);
@@ -440,7 +441,6 @@ final class ModLeInstantintentHelper
         while (count($out) < $count && $attempts < $maxAttempts) {
             $attempts++;
 
-            $poolSize = count($pool);
             if ($poolSize > 0) {
                 $idx = random_int(0, $poolSize - 1);
                 $n = (int) $pool[$idx];
