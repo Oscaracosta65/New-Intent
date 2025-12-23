@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" version="5.0" client="site" method="upgrade">
+  <name>mod_le_instantintent</name>
+  <author>LottoExpert.net</author>
+  <version>1.1.0</version>
+  <description>MOD_LE_INSTANTINTENT_DESC</description>
+
+  <files>
+    <filename module="mod_le_instantintent">mod_le_instantintent.php</filename>
+    <filename>helper.php</filename>
+    <filename>index.html</filename>
+    <folder>tmpl</folder>
+    <folder>media</folder>
+    <folder>language</folder>
+  </files>
+
+  <media destination="mod_le_instantintent" folder="media">
+    <folder>css</folder>
+    <folder>js</folder>
+  </media>
+
+  <languages>
+    <language tag="en-GB">language/en-GB/en-GB.mod_le_instantintent.ini</language>
+    <language tag="en-GB">language/en-GB/en-GB.mod_le_instantintent.sys.ini</language>
+  </languages>
+
+  <config>
+    <fields name="params">
+      <fieldset name="basic" label="MOD_LE_INSTANTINTENT_FIELDSET_BASIC">
+        <field name="headline" type="text" label="MOD_LE_INSTANTINTENT_HEADLINE"
+               default="Powerball Lucky Numbers Today — Quick Picks" />
+
+        <field name="subtitle" type="textarea" rows="3" filter="safehtml"
+               label="MOD_LE_INSTANTINTENT_SUBTITLE"
+               default="Get instant quick-pick lines. Choose a method (Random, Hot/Cold, or Skip–Hit), then open SKAI to see the data context behind your picks." />
+
+        <field name="skai_url" type="url" label="MOD_LE_INSTANTINTENT_SKAI_URL"
+               default="/powerball-winning-numbers-analysis-tools/powerball-skip-analysis" />
+
+        <field name="results_url" type="url" label="MOD_LE_INSTANTINTENT_RESULTS_URL"
+               default="/powerball-winning-numbers-analysis-tools" />
+
+        <field name="membership_url" type="url" label="MOD_LE_INSTANTINTENT_MEMBERSHIP_URL"
+               default="/membership/lottoexpert-subscriptions" />
+      </fieldset>
+
+      <fieldset name="game" label="MOD_LE_INSTANTINTENT_FIELDSET_GAME">
+        <field name="game_key" type="text" label="MOD_LE_INSTANTINTENT_GAME_KEY"
+               default="powerball" description="Used for storage keys and IDs. Keep unique per page." />
+
+        <field name="main_count" type="number" label="MOD_LE_INSTANTINTENT_MAIN_COUNT"
+               default="5" min="1" max="20" step="1" />
+
+        <field name="main_min" type="number" label="MOD_LE_INSTANTINTENT_MAIN_MIN"
+               default="1" min="0" max="999" step="1" />
+
+        <field name="main_max" type="number" label="MOD_LE_INSTANTINTENT_MAIN_MAX"
+               default="69" min="0" max="999" step="1" />
+
+        <field name="extra_enabled" type="radio" label="MOD_LE_INSTANTINTENT_EXTRA_ENABLED"
+               default="1">
+          <option value="1">JYES</option>
+          <option value="0">JNO</option>
+        </field>
+
+        <field name="extra_label" type="text" label="MOD_LE_INSTANTINTENT_EXTRA_LABEL"
+               default="PB" />
+
+        <field name="extra_count" type="number" label="MOD_LE_INSTANTINTENT_EXTRA_COUNT"
+               default="1" min="0" max="5" step="1" />
+
+        <field name="extra_min" type="number" label="MOD_LE_INSTANTINTENT_EXTRA_MIN"
+               default="1" min="0" max="999" step="1" />
+
+        <field name="extra_max" type="number" label="MOD_LE_INSTANTINTENT_EXTRA_MAX"
+               default="26" min="0" max="999" step="1" />
+
+        <!-- NEW: Skip–Hit source wiring -->
+        <field name="db_table" type="text" label="MOD_LE_INSTANTINTENT_DB_TABLE"
+               default="#__lotterydb_powerball"
+               description="Full table name holding draw rows for this game." />
+
+        <field name="db_game_id" type="text" label="MOD_LE_INSTANTINTENT_DB_GAME_ID"
+               default="PB"
+               description="The game_id stored in the draw table for this game." />
+
+        <field name="draw_date_col" type="text" label="MOD_LE_INSTANTINTENT_DRAW_DATE_COL"
+               default="draw_date" />
+
+        <field name="main_cols_csv" type="text" label="MOD_LE_INSTANTINTENT_MAIN_COLS_CSV"
+               default="first,second,third,fourth,fifth"
+               description="Comma-separated main ball columns." />
+
+        <field name="extra_col" type="text" label="MOD_LE_INSTANTINTENT_EXTRA_COL"
+               default="powerball"
+               description="Extra ball column name (blank if none)." />
+
+        <field name="history_limit" type="number" label="MOD_LE_INSTANTINTENT_HISTORY_LIMIT"
+               default="400" min="50" max="5000" step="10"
+               description="How many most-recent draws to use for Hot/Cold and Skip–Hit." />
+      </fieldset>
+
+      <fieldset name="ui" label="MOD_LE_INSTANTINTENT_FIELDSET_UI">
+        <field name="default_method" type="list" label="MOD_LE_INSTANTINTENT_DEFAULT_METHOD"
+               default="random">
+          <option value="random">Random</option>
+          <option value="hotcold">Hot/Cold (heuristic)</option>
+          <option value="skiphit">Skip–Hit (heuristic)</option>
+        </field>
+
+        <field name="default_lines" type="number" label="MOD_LE_INSTANTINTENT_DEFAULT_LINES"
+               default="5" min="3" max="10" step="1" />
+
+        <field name="min_lines" type="number" label="MOD_LE_INSTANTINTENT_MIN_LINES"
+               default="3" min="1" max="50" step="1" />
+
+        <field name="max_lines" type="number" label="MOD_LE_INSTANTINTENT_MAX_LINES"
+               default="10" min="1" max="50" step="1" />
+
+        <field name="timezone" type="text" label="MOD_LE_INSTANTINTENT_TIMEZONE"
+               default="America/New_York" />
+
+        <field name="show_hero" type="radio" label="MOD_LE_INSTANTINTENT_SHOW_HERO"
+               default="1">
+          <option value="1">JYES</option>
+          <option value="0">JNO</option>
+        </field>
+      </fieldset>
+    </fields>
+  </config>
+</extension>
