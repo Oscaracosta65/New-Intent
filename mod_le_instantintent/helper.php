@@ -440,8 +440,9 @@ final class ModLeInstantintentHelper
         while (count($out) < $count && $attempts < $maxAttempts) {
             $attempts++;
 
-            if ($pool && count($pool) > 0) {
-                $idx = random_int(0, count($pool) - 1);
+            $poolSize = count($pool);
+            if ($poolSize > 0) {
+                $idx = random_int(0, $poolSize - 1);
                 $n = (int) $pool[$idx];
             } else {
                 $n = random_int($min, $max);
