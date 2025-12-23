@@ -379,9 +379,25 @@ final class ModLeInstantintentHelper
 
     private static function randomUnique(int $count, int $min, int $max, bool $excludeZero): array
     {
+        // Calculate available pool size
+        $poolSize = $max - $min + 1;
+        if ($excludeZero && $min <= 0 && $max >= 0) {
+            $poolSize--;
+        }
+        
+        // Cannot generate more unique numbers than available in pool
+        $count = min($count, $poolSize);
+        
+        // Early return if count is invalid
+        if ($count <= 0 || $poolSize <= 0) {
+            return [];
+        }
+        
         $out = [];
         $guard = 0;
-        while (count($out) < $count && $guard < 20000) {
+        $maxAttempts = min(20000, $poolSize * 10); // Reasonable attempts based on pool size
+        
+        while (count($out) < $count && $guard < $maxAttempts) {
             $guard++;
             $n = random_int($min, $max);
             if ($excludeZero && $n === 0) { continue; }
@@ -392,17 +408,40 @@ final class ModLeInstantintentHelper
 
     private static function sampleFromPoolUnique(int $count, array $pool, int $min, int $max, bool $excludeZero): array
     {
-        // If pool too small, expand by adding randoms.
+        // Calculate available pool size in the full range
+        $rangePoolSize = $max - $min + 1;
+        if ($excludeZero && $min <= 0 && $max >= 0) {
+            $rangePoolSize--;
+        }
+        
+        // Cannot generate more unique numbers than available
+        $count = min($count, $rangePoolSize);
+        
+        // Early return if count is invalid
+        if ($count <= 0 || $rangePoolSize <= 0) {
+            return [];
+        }
+        
         $out = [];
         $pool = array_values(array_unique(array_map('intval', $pool)));
+        
+        // Filter pool to only include valid numbers
+        $pool = array_filter($pool, function($n) use ($min, $max, $excludeZero) {
+            if ($n < $min || $n > $max) { return false; }
+            if ($excludeZero && $n === 0) { return false; }
+            return true;
+        });
+        $pool = array_values($pool);
 
-        // Weighted-ish: earlier entries more likely (shuffle chunks)
+        // Reasonable attempt limit based on what we need
+        $maxAttempts = min(3000, $count * 50);
         $attempts = 0;
-        while (count($out) < $count && $attempts < 3000) {
+        
+        while (count($out) < $count && $attempts < $maxAttempts) {
             $attempts++;
 
-            if ($pool) {
-                $idx = random_int(0, max(0, count($pool) - 1));
+            if ($pool && count($pool) > 0) {
+                $idx = random_int(0, count($pool) - 1);
                 $n = (int) $pool[$idx];
             } else {
                 $n = random_int($min, $max);
