@@ -39,7 +39,11 @@ final class ModLeInstantintentHelper
         $params = new \Joomla\Registry\Registry($module->params);
 
         $payload = self::buildPicksPayload($params, $method, $lines);
-        $payload['ok'] = true;
+        
+        // Only set ok=true if buildPicksPayload didn't already set it to false
+        if (!isset($payload['ok'])) {
+            $payload['ok'] = true;
+        }
 
         return $payload;
     }
