@@ -12,13 +12,31 @@
     return n;
   }
 
-  function toast(root, msg){
+  function toast(root, msg, persist, type){
     var t = q(root, ".le-toast");
     if (!t) return;
     t.textContent = msg;
+    
+    // Remove old type classes
+    t.classList.remove("le-toast--loading", "le-toast--success", "le-toast--error");
+    
+    // Add new type class if specified
+    if (type) {
+      t.classList.add("le-toast--" + type);
+    }
+    
     t.classList.add("on");
     window.clearTimeout(t.__le_to);
-    t.__le_to = window.setTimeout(function(){ t.classList.remove("on"); }, 1800);
+    if (!persist) {
+      t.__le_to = window.setTimeout(function(){ t.classList.remove("on"); }, 1800);
+    }
+  }
+
+  function hideToast(root){
+    var t = q(root, ".le-toast");
+    if (!t) return;
+    window.clearTimeout(t.__le_to);
+    t.classList.remove("on");
   }
 
   function el(tag, cls, txt){
@@ -85,12 +103,12 @@
           }
           if (navigator.clipboard && navigator.clipboard.writeText){
             navigator.clipboard.writeText(txt).then(function(){
-              toast(root, "Copied.");
+              toast(root, "✓ Copied to clipboard!", false, "success");
             }).catch(function(){
-              toast(root, "Copy failed.");
+              toast(root, "⚠ Copy failed", false, "error");
             });
           } else {
-            toast(root, "Clipboard not available.");
+            toast(root, "⚠ Clipboard not available", false, "error");
           }
         };
       })(line.main || [], line.extra || []));
@@ -117,22 +135,43 @@
       + "&pick_method=" + encodeURIComponent(method)
       + "&lines=" + encodeURIComponent(lines);
 
-    toast(root, "Generating…");
+    var btn = q(root, ".le-generate");
+    
+    // Show loading state
+    if (btn) {
+      btn.classList.add("le-loading");
+      btn.disabled = true;
+    }
+    toast(root, "Generating picks…", true, "loading");
 
     return fetch(url, { credentials: "same-origin" })
-      .then(function(r){ return r.json(); })
+      .then(function(r){ 
+        if (!r.ok) {
+          throw new Error("Server error: " + r.status);
+        }
+        return r.json(); 
+      })
       .then(function(j){
         if (!j || j.ok !== true){
           throw new Error((j && j.error) ? j.error : "Unknown error");
         }
         renderPicks(root, j);
-        toast(root, "Updated.");
+        toast(root, "✓ Picks generated successfully!", false, "success");
         return j;
       })
       .catch(function(err){
-        toast(root, "Fallback to random.");
-        // client fallback: do nothing fancy; keep current display
+        toast(root, "⚠ Error: " + err.message, true, "error");
+        console.error("Failed to fetch picks:", err);
         return null;
+      })
+      .finally(function(){
+        // Remove loading state
+        if (btn) {
+          btn.classList.remove("le-loading");
+          btn.disabled = false;
+        }
+        // Auto-hide error toast after 5 seconds
+        window.setTimeout(function(){ hideToast(root); }, 5000);
       });
   }
 

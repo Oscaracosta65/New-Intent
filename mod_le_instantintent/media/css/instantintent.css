@@ -516,6 +516,7 @@
   cursor:pointer !important;
   transition: transform .14s ease, background .14s ease, border-color .14s ease;
   min-width: 78px;
+  position: relative;
 }
 .le-ii-mod .le-icon-btn:hover{
   transform: translateY(-1px);
@@ -523,6 +524,30 @@
   background: rgba(255,255,255,.10) !important;
 }
 .le-ii-mod .le-icon-btn:focus{ outline:none; box-shadow: var(--focus); }
+
+/* Loading state for button */
+.le-ii-mod .le-icon-btn.le-loading{
+  cursor: wait !important;
+  background: rgba(28,102,255,.20) !important;
+  border-color: rgba(28,102,255,.35) !important;
+  pointer-events: none;
+}
+.le-ii-mod .le-icon-btn.le-loading::before{
+  content: "" !important;
+  position: absolute !important;
+  width: 14px !important;
+  height: 14px !important;
+  margin-right: 6px;
+  border: 2px solid rgba(238,242,255,.25) !important;
+  border-top-color: rgba(238,242,255,.85) !important;
+  border-radius: 50% !important;
+  animation: le-spin 0.7s linear infinite !important;
+}
+
+@keyframes le-spin {
+  to { transform: rotate(360deg); }
+}
+
 
 .le-ii-mod .le-method-card{ display:grid; gap:10px; }
 .le-ii-mod .le-method-pill{
@@ -566,18 +591,35 @@
   background: rgba(10,16,32,.94) !important;
   border: 1px solid rgba(255,255,255,.14) !important;
   color: var(--le-text) !important;
-  padding: 10px 12px;
+  padding: 12px 16px;
   border-radius: 14px;
   font-size: 13px;
+  font-weight: 600;
   z-index: 9999;
   opacity: 0;
   pointer-events:none;
   transition: opacity .18s ease, transform .18s ease;
   box-shadow: var(--le-shadow2);
+  min-width: 180px;
+  text-align: center;
 }
 .le-ii-mod .le-toast.on{
   opacity: 1;
   transform: translateX(-50%) translateY(-2px);
+}
+
+/* Toast variants */
+.le-ii-mod .le-toast.le-toast--loading{
+  background: rgba(28,102,255,.92) !important;
+  border-color: rgba(28,102,255,.45) !important;
+}
+.le-ii-mod .le-toast.le-toast--success{
+  background: rgba(32,201,151,.92) !important;
+  border-color: rgba(32,201,151,.45) !important;
+}
+.le-ii-mod .le-toast.le-toast--error{
+  background: rgba(220,38,38,.92) !important;
+  border-color: rgba(220,38,38,.45) !important;
 }
 
 /* CHG: consistent dropdown caret */
